@@ -91,7 +91,9 @@ async function handleUpdate(req, res) {
       if (key in props) {
         const v = props[key];
         if (v !== null && !options.includes(v)) throw new HttpError(400, 'bad_props');
-        properties[PROP[key]] = { select: v === null ? null : { name: v } };
+                properties[PROP[key]] = key === 'tag'
+          ? { multi_select: v === null ? [] : [{ name: v }] }
+          : { select: v === null ? null : { name: v } };
       }
     }
     if (Object.keys(properties).length) {
