@@ -193,7 +193,7 @@ function toEntry(page) {
     study: !!(p[PROP.study] && p[PROP.study].checkbox),
     sport: !!(p[PROP.sport] && p[PROP.sport].checkbox),
     drink: (p[PROP.drink] && p[PROP.drink].select && p[PROP.drink].select.name) || null,
-    tag: (p[PROP.tag] && p[PROP.tag].select && p[PROP.tag].select.name) || null,
+        tag: (p[PROP.tag] && p[PROP.tag].multi_select && p[PROP.tag].multi_select[0] && p[PROP.tag].multi_select[0].name) || null,
     createdTime: page.created_time,
   };
 }
