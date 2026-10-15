@@ -1,0 +1,293 @@
+/* =====================================================================
+   星辰卷軸 —— 樣式
+   設計概念：夜空 ＋ 月白卷軸紙。
+   · 首頁是「星圖」：寫過日記的日子會亮成金色星點，連續幾天會被金線串起來
+   · 日記頁是一卷月白色的紙，上下有漆黑木軸，打開時會往下展開
+   ===================================================================== */
+
+:root {
+  --night: #0E1530;       /* 夜空底色 */
+  --night-2: #18224A;
+  --moon: #E7EBEF;        /* 紙：月白（偏冷，不是米黃） */
+  --moon-2: #D9E0E7;
+  --ink: #1B2335;         /* 紙上的字 */
+  --ink-soft: #4B566E;
+  --mist: #8B96B0;        /* 夜空上的次要文字 */
+  --star: #E3BC5E;        /* 星點金 */
+  --seal: #B8372E;        /* 印章朱紅 */
+  --lacquer: #241A2E;     /* 木軸漆黑 */
+
+  --sans: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --serif: "Songti TC", "Noto Serif TC", "Noto Serif CJK TC", "PMingLiU", serif;
+
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html, body { margin: 0; min-height: 100%; }
+body {
+  background: var(--night);
+  color: #E9ECF5;
+  font-family: var(--sans);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+
+/* ---------- 夜空背景：幾顆固定的星點＋頂部微光 ---------- */
+#sky {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(1.4px 1.4px at 12% 14%, rgba(255,255,255,.75) 50%, transparent 52%),
+    radial-gradient(1px 1px at 28% 32%, rgba(255,255,255,.55) 50%, transparent 52%),
+    radial-gradient(1.6px 1.6px at 47% 9%, rgba(227,188,94,.8) 50%, transparent 52%),
+    radial-gradient(1px 1px at 63% 24%, rgba(255,255,255,.6) 50%, transparent 52%),
+    radial-gradient(1.3px 1.3px at 82% 12%, rgba(255,255,255,.7) 50%, transparent 52%),
+    radial-gradient(1px 1px at 91% 38%, rgba(255,255,255,.5) 50%, transparent 52%),
+    radial-gradient(1.2px 1.2px at 8% 62%, rgba(255,255,255,.5) 50%, transparent 52%),
+    radial-gradient(1.5px 1.5px at 35% 78%, rgba(255,255,255,.65) 50%, transparent 52%),
+    radial-gradient(1px 1px at 72% 70%, rgba(255,255,255,.5) 50%, transparent 52%),
+    radial-gradient(1.3px 1.3px at 94% 88%, rgba(227,188,94,.7) 50%, transparent 52%),
+    radial-gradient(ellipse at 50% -10%, var(--night-2) 0%, transparent 65%),
+    var(--night);
+}
+
+#app {
+  position: relative; z-index: 1;
+  max-width: 560px; margin: 0 auto;
+  padding: calc(var(--safe-top) + 14px) 16px calc(var(--safe-bottom) + 100px);
+}
+
+/* ---------- 通用按鈕 ---------- */
+.btn {
+  border: 1px solid rgba(227,188,94,.5); background: transparent;
+  color: var(--star); border-radius: 999px; padding: 10px 20px; font-size: 15px;
+}
+.btn.primary { background: var(--star); color: #1c1606; border-color: var(--star); font-weight: 700; }
+.btn.ghost { color: var(--mist); border-color: rgba(139,150,176,.35); }
+.btn:disabled { opacity: .5; }
+
+/* =====================================================================
+   畫面一：星圖月曆
+   ===================================================================== */
+.cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.nav-btn {
+  width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(139,150,176,.3);
+  background: transparent; font-size: 24px; line-height: 1; color: var(--mist);
+}
+.cal-title { text-align: center; }
+.cal-month { font-family: var(--serif); font-size: 34px; font-weight: 900; letter-spacing: 6px; text-indent: 6px; }
+.cal-year { font-size: 13px; letter-spacing: 4px; color: var(--star); margin-top: 2px; }
+.cal-summary { text-align: center; color: var(--mist); font-size: 13px; margin: 10px 0 18px; min-height: 18px; }
+
+.weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 12px; color: var(--mist); margin-bottom: 8px; }
+
+.grid-wrap { position: relative; }
+#constellation { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+#constellation .link { stroke: var(--star); stroke-width: 1.5; stroke-opacity: .55; stroke-linecap: round; }
+.grid { position: relative; display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px 6px; }
+
+.day, .day-blank { aspect-ratio: 1; }
+.day {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; border: 1px solid rgba(139,150,176,.2); background: transparent;
+  color: var(--mist); font-size: 15px; padding: 0;
+}
+.day.future { opacity: .45; }
+.day.today { border-color: var(--star); color: #fff; box-shadow: 0 0 0 3px rgba(227,188,94,.15); }
+
+/* 寫過的日子：亮起的金色星點 */
+.day.lit {
+  background: radial-gradient(circle at 35% 30%, #F6DE98 0%, var(--star) 55%, #C99A38 100%);
+  border-color: transparent; color: #241a05; font-weight: 700;
+  box-shadow: 0 0 14px rgba(227,188,94,.55);
+}
+.day .dots { position: absolute; bottom: 5px; display: flex; gap: 3px; }
+.day .dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(40,30,5,.22); }
+.day .dot.on { background: #2b2106; }
+
+.legend { text-align: center; color: var(--mist); font-size: 12px; margin: 20px 0 6px; }
+.legend-star { color: var(--star); font-weight: 700; }
+.legend-dots { display: inline-flex; gap: 3px; vertical-align: middle; }
+.legend-dots i { width: 5px; height: 5px; border-radius: 50%; background: var(--star); display: block; }
+.cal-actions { display: flex; justify-content: center; margin-top: 10px; }
+
+.fab {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: calc(var(--safe-bottom) + 22px); z-index: 5;
+  border: 0; border-radius: 999px; padding: 15px 34px;
+  background: linear-gradient(180deg, #F2D58A, var(--star)); color: #1c1606;
+  font-weight: 800; font-size: 17px; letter-spacing: 2px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.45), 0 0 22px rgba(227,188,94,.4);
+}
+
+/* =====================================================================
+   畫面二：日記卷軸
+   ===================================================================== */
+.entry-bar {
+  position: sticky; top: 0; z-index: 4;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: calc(var(--safe-top) * 0 + 6px) 0 10px;
+}
+.bar-btn {
+  background: rgba(14,21,48,.7); border: 1px solid rgba(139,150,176,.3);
+  border-radius: 999px; padding: 8px 16px; font-size: 14px; color: #dfe4f1;
+  backdrop-filter: blur(6px);
+}
+.bar-btn.strong { background: var(--star); border-color: var(--star); color: #1c1606; font-weight: 700; min-width: 64px; }
+.save-state { flex: 1; background: none; border: 0; color: var(--mist); font-size: 12px; text-align: center; padding: 6px; }
+.save-state.error { color: #ff9b8f; text-decoration: underline; }
+
+/* 展開動畫：像卷軸從上往下攤開 */
+.scroll.unroll { animation: unroll .7s cubic-bezier(.2,.7,.2,1); }
+@keyframes unroll { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+
+.rod {
+  height: 18px; border-radius: 9px; position: relative; z-index: 2;
+  background: linear-gradient(180deg, #3b2c47, var(--lacquer) 60%, #130d19);
+  box-shadow: 0 4px 12px rgba(0,0,0,.5);
+}
+.rod::before, .rod::after {
+  content: ""; position: absolute; top: -2px; width: 14px; height: 22px; border-radius: 7px;
+  background: linear-gradient(180deg, #F2D58A, #B98B2E);
+}
+.rod::before { left: -5px; }
+.rod::after { right: -5px; }
+
+.paper {
+  position: relative; margin: -2px 6px;
+  background: linear-gradient(180deg, var(--moon), var(--moon-2));
+  color: var(--ink); font-family: var(--serif);
+  padding: 30px 22px 38px;
+  box-shadow: inset 0 0 50px rgba(90,110,150,.12), 0 14px 30px rgba(0,0,0,.4);
+  min-height: 360px;
+}
+.seal {
+  position: absolute; top: 20px; right: 20px; width: 42px; height: 42px;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--seal); border-radius: 5px; color: var(--seal);
+  font-size: 12px; font-weight: 900; letter-spacing: 2px; writing-mode: vertical-rl;
+  transform: rotate(-6deg); opacity: .85;
+}
+.entry-year { font-family: var(--sans); font-size: 12px; letter-spacing: 3px; color: var(--ink-soft); }
+.entry-date { font-size: 32px; font-weight: 900; line-height: 1.25; margin: 4px 0 16px; padding-right: 54px; }
+
+/* 屬性列：聊天／學習／運動／典藏 + 飲料 + TAG */
+.props { font-family: var(--sans); border-top: 1px solid rgba(27,35,53,.14); border-bottom: 1px solid rgba(27,35,53,.14); padding: 12px 0; margin-bottom: 18px; display: grid; gap: 10px; }
+.prop-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.prop-label { font-size: 12px; color: var(--ink-soft); width: 34px; letter-spacing: 1px; }
+.chip, .seg-btn {
+  border: 1px solid rgba(27,35,53,.28); background: transparent; color: var(--ink-soft);
+  border-radius: 999px; padding: 6px 14px; font-size: 14px;
+}
+.chip.on, .seg-btn.on { background: var(--ink); border-color: var(--ink); color: #F6DE98; font-weight: 700; }
+
+/* ---------- Notion 內容 ---------- */
+.blocks { font-size: 16px; line-height: 1.9; }
+.blocks .loading { color: var(--ink-soft); }
+.block { margin: 2px 0; white-space: pre-wrap; word-break: break-word; }
+.block .p { margin: 6px 0; min-height: 1.9em; }
+.block h1, .block h2, .block h3 { margin: 0; line-height: 1.4; }
+.block-heading_1 { margin-top: 26px; font-size: 27px; }
+.block-heading_2 { margin-top: 26px; font-size: 22px; letter-spacing: 1px; }
+.block-heading_3 { margin-top: 18px; font-size: 18px; color: var(--ink-soft); }
+.block h1, .block h2, .block h3 { font-weight: 800; }
+.block-heading_2:first-child { margin-top: 4px; }
+
+.list { margin: 4px 0; padding-left: 1.5em; }
+.list .li { margin: 2px 0; }
+.children { margin-left: 1.2em; }
+
+.quote { margin: 10px 0; padding: 2px 14px; border-left: 3px solid var(--seal); color: var(--ink-soft); }
+.block-callout { display: flex; gap: 10px; background: rgba(27,35,53,.07); border-radius: 8px; padding: 10px 14px; margin: 12px 0; }
+.callout-icon { font-size: 18px; }
+.block.todo { display: flex; gap: 8px; align-items: flex-start; }
+.todo-box { margin-top: 9px; }
+.todo-text.done { text-decoration: line-through; color: var(--ink-soft); }
+.divider { border: 0; border-top: 1px solid rgba(27,35,53,.2); margin: 20px 40px; }
+.block-code pre { background: rgba(27,35,53,.9); color: #E7EBEF; padding: 12px 14px; border-radius: 8px; overflow-x: auto; font-size: 13.5px; line-height: 1.6; margin: 8px 0; white-space: pre; }
+.code-lang { font-family: var(--sans); font-size: 11px; color: var(--ink-soft); }
+.block-image img { max-width: 100%; border-radius: 6px; display: block; margin: 8px 0; }
+.caption { font-family: var(--sans); font-size: 12px; color: var(--ink-soft); }
+.block a { color: #25648c; }
+.unsupported { font-family: var(--sans); font-size: 12px; color: var(--ink-soft); background: rgba(27,35,53,.06); padding: 6px 10px; border-radius: 6px; margin: 6px 0; }
+
+/* 摺疊 toggle */
+.toggle-head { display: flex; align-items: flex-start; gap: 4px; }
+.toggle-arrow { flex: none; width: 28px; height: 32px; margin-top: 2px; background: none; border: 0; color: var(--ink-soft); font-size: 15px; transition: transform .2s; padding: 0; }
+.toggle.open > .toggle-head > .toggle-arrow { transform: rotate(90deg); }
+.toggle-title { flex: 1; margin: 4px 0; font-weight: 700; cursor: pointer; }
+.toggle-body { margin-left: 14px; padding-left: 14px; border-left: 2px solid rgba(179,138,46,.45); }
+
+/* 文字樣式（對應 Notion 的 annotations） */
+.b { font-weight: 800; }
+.i { font-style: italic; }
+.u { text-decoration: underline; }
+.s { text-decoration: line-through; }
+.u.s { text-decoration: underline line-through; }
+.code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .88em; background: rgba(27,35,53,.1); border-radius: 4px; padding: 1px 5px; }
+
+/* Notion 的 9 種文字色 ＋ 9 種底色（為了在月白紙上好讀，色相略微加深） */
+.c-gray { color: #7d8798; }   .c-brown { color: #7a5230; }  .c-orange { color: #b95d0a; }
+.c-yellow { color: #9a7400; } .c-green { color: #2a6b4f; }  .c-blue { color: #25648c; }
+.c-purple { color: #68459a; } .c-pink { color: #a2336c; }   .c-red { color: #b8372e; }
+.c-gray_background { background: #dde2e9; }   .c-brown_background { background: #e6d5c8; }
+.c-orange_background { background: #f7dcc0; } .c-yellow_background { background: #f6e7a8; }
+.c-green_background { background: #d3e8dc; }  .c-blue_background { background: #cfe3f0; }
+.c-purple_background { background: #e1d6f0; } .c-pink_background { background: #f3d4e4; }
+.c-red_background { background: #f5d2cf; }
+.block[class*="_background"] { padding: 2px 10px; border-radius: 6px; }
+
+/* ---------- 書寫模式：文字框 ---------- */
+textarea.edit {
+  display: block; width: 100%; resize: none; overflow: hidden;
+  font: inherit; line-height: inherit; color: var(--ink);
+  background: rgba(255,255,255,.55); border: 1px dashed rgba(27,35,53,.28);
+  border-radius: 6px; padding: 3px 8px; margin: 3px 0; white-space: pre-wrap;
+}
+textarea.edit:focus { outline: 2px solid var(--star); border-style: solid; background: #fff; }
+textarea.edit-heading_1 { font-size: 27px; font-weight: 800; }
+textarea.edit-heading_2 { font-size: 22px; font-weight: 800; }
+textarea.edit-heading_3 { font-size: 18px; font-weight: 800; }
+.append { display: block; margin: 20px auto 0; color: var(--ink-soft); border-color: rgba(27,35,53,.3); }
+
+.pager { display: flex; justify-content: space-between; margin-top: 18px; }
+.pager-btn { background: transparent; border: 1px solid rgba(139,150,176,.3); border-radius: 999px; padding: 9px 18px; color: var(--mist); font-size: 14px; }
+
+/* =====================================================================
+   畫面三：配對
+   ===================================================================== */
+.pair-card { margin-top: 18vh; text-align: center; display: grid; gap: 14px; justify-items: center; }
+.pair-star { font-size: 40px; color: var(--star); text-shadow: 0 0 18px rgba(227,188,94,.7); }
+.pair-card h1 { margin: 0; font-family: var(--serif); font-size: 30px; letter-spacing: 6px; }
+.pair-card p { margin: 0; color: var(--mist); line-height: 1.8; font-size: 14px; }
+.pair-card input {
+  width: 100%; max-width: 320px; padding: 13px 16px; border-radius: 12px; font-size: 16px;
+  background: rgba(255,255,255,.07); border: 1px solid rgba(139,150,176,.4); color: #fff;
+}
+.error { color: #ff9b8f !important; }
+
+/* =====================================================================
+   提示框與底部卡片
+   ===================================================================== */
+.toast {
+  position: fixed; left: 50%; top: calc(var(--safe-top) + 14px); transform: translateX(-50%);
+  background: #fff; color: var(--ink); padding: 10px 18px; border-radius: 999px;
+  font-size: 14px; z-index: 20; box-shadow: 0 6px 20px rgba(0,0,0,.4); max-width: 90vw;
+}
+.sheet { position: fixed; inset: 0; z-index: 15; background: rgba(5,8,20,.6); display: flex; align-items: flex-end; justify-content: center; }
+.sheet-card {
+  width: 100%; max-width: 560px; background: var(--night-2);
+  border-top: 1px solid rgba(227,188,94,.4); border-radius: 22px 22px 0 0;
+  padding: 26px 22px calc(var(--safe-bottom) + 24px); display: grid; gap: 10px; text-align: center;
+}
+.sheet-title { font-family: var(--serif); font-size: 24px; font-weight: 800; }
+.sheet-note { margin: 0 0 8px; color: var(--mist); font-size: 14px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll.unroll { animation: none; }
+  .toggle-arrow { transition: none; }
+}

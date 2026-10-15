@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>星辰卷軸</title>
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#0E1530">
+
+  <!-- PWA：加到手機桌面時用的設定 -->
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="星辰卷軸">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <!-- 夜空背景（純 CSS 星點） -->
+  <div id="sky" aria-hidden="true"></div>
+
+  <main id="app">
+
+    <!-- ===== 畫面一：星圖月曆（首頁） ===== -->
+    <section id="view-calendar" class="view">
+      <header class="cal-head">
+        <button id="prev-month" class="nav-btn" aria-label="上個月">‹</button>
+        <div class="cal-title">
+          <div id="cal-month" class="cal-month"></div>
+          <div id="cal-year" class="cal-year"></div>
+        </div>
+        <button id="next-month" class="nav-btn" aria-label="下個月">›</button>
+      </header>
+
+      <p id="cal-summary" class="cal-summary" role="status"></p>
+
+      <div class="weekdays" aria-hidden="true">
+        <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+      </div>
+
+      <!-- svg 畫「連續寫日記」的金線，疊在日期格子後面 -->
+      <div class="grid-wrap">
+        <svg id="constellation" aria-hidden="true"></svg>
+        <div id="cal-grid" class="grid"></div>
+      </div>
+
+      <p class="legend">
+        <span class="legend-star">亮起</span> 這天寫過
+        <span class="legend-dots"><i></i><i></i><i></i></span> 聊天／學習／運動
+      </p>
+
+      <div class="cal-actions">
+        <button id="btn-this-month" class="btn ghost">回到本月</button>
+      </div>
+
+      <button id="fab-write" class="fab">✦ 寫今天</button>
+    </section>
+
+    <!-- ===== 畫面二：日記卷軸（閱讀 / 書寫） ===== -->
+    <section id="view-entry" class="view" hidden>
+      <header class="entry-bar">
+        <button id="btn-back" class="bar-btn">‹ 星圖</button>
+        <button id="save-state" class="save-state" type="button"></button>
+        <button id="btn-mode" class="bar-btn strong">寫</button>
+      </header>
+
+      <div id="scroll" class="scroll">
+        <div class="rod"></div>
+        <article class="paper">
+          <div class="seal" aria-hidden="true">日記</div>
+          <div class="entry-year" id="entry-year"></div>
+          <div class="entry-date" id="entry-date"></div>
+          <div class="props" id="props"></div>
+          <div class="blocks" id="blocks"></div>
+          <button id="btn-append" class="btn ghost append" hidden>＋ 新增一段</button>
+        </article>
+        <div class="rod"></div>
+      </div>
+
+      <nav class="pager" id="pager">
+        <button id="btn-prev" class="pager-btn">‹ 前一篇</button>
+        <button id="btn-next" class="pager-btn">後一篇 ›</button>
+      </nav>
+    </section>
+
+    <!-- ===== 畫面三：第一次使用，配對這支手機 ===== -->
+    <section id="view-pair" class="view" hidden>
+      <div class="pair-card">
+        <div class="pair-star" aria-hidden="true">✦</div>
+        <h1>星辰卷軸</h1>
+        <p>這支手機還沒連結你的日記。<br>貼上你設定的存取金鑰，只需要做這一次。</p>
+        <input id="pair-input" type="password" autocomplete="off" autocapitalize="off"
+               spellcheck="false" placeholder="貼上存取金鑰">
+        <button id="pair-save" class="btn primary">連結這支手機</button>
+        <p id="pair-error" class="error" hidden></p>
+      </div>
+    </section>
+  </main>
+
+  <!-- 點「還沒寫」的日子時跳出的確認卡（避免手滑建立空白日記） -->
+  <div id="sheet" class="sheet" hidden>
+    <div class="sheet-card">
+      <div id="sheet-title" class="sheet-title"></div>
+      <p class="sheet-note">這天還沒有日記。</p>
+      <button id="sheet-go" class="btn primary">開始寫這天</button>
+      <button id="sheet-cancel" class="btn ghost">取消</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <script src="/app.js" defer></script>
+</body>
+</html>

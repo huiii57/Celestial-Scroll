@@ -1,0 +1,12 @@
+{
+  "name": "star-scroll-diary",
+  "version": "1.0.0",
+  "private": true,
+  "description": "星辰卷軸：以 Notion 資料庫為後端的個人日記 PWA",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@notionhq/client": "^2.2.15"
+  }
+}
